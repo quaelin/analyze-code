@@ -1,6 +1,6 @@
 {
   "name": "analyze-code",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Chris Campbell",
     "url": "https://github.com/quaelin"
@@ -17,6 +17,9 @@
     "node": ">=10"
   },
   "main": "./index.js",
+  "bin": {
+    "analyze-code": "./bin"
+  },
   "dependencies": {
     "lodash": "^4.17.20",
     "minimist": "^1.2.5"
