@@ -1,0 +1,20 @@
+{
+  "name": "analyze-code",
+  "version": "0.0.0",
+  "author": {
+    "name": "Chris Campbell",
+    "url": "https://github.com/quaelin"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/quaelin/analyze-code"
+  },
+  "bugs": {
+    "url": "https://github.com/quaelin/analyze-code/issues"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "main": "./index.js"
+}
