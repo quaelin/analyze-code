@@ -26,9 +26,13 @@ parseArgs(process)
     console.log(`Disk Usage: ${diskUsage}`);
 
     const { languages } = await scanFiles(target, { extraFileExtensions });
-
-    console.log('Languages:');
+    const arr = [];
     each(languages, ({ files, lines }, language) => {
+      arr.push([language, files, lines]);
+    });
+    arr.sort((a, b) => b[2] - a[2]); // Sort by line count
+    console.log('Languages:');
+    each(arr, ([language, files, lines]) => {
       console.log(`  ${language}: ${files} files, ${lines} lines`);
     });
   })
