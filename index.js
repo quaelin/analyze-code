@@ -12,11 +12,24 @@ const extraFileExtensions = {
   '.jsx.snap': 'Jest',
   '.mdown': 'Markdown',
   '.pl': 'Perl', // language-detect considers .pl to be Prolog, but it rarely is
+  '.ts': 'Typescript',
+  '.ts.snap': 'Jest',
+  '.tsx': 'Typescript',
+  '.tsx.snap': 'Jest',
   '.tsv': 'Tab Separated Values',
 };
 
 parseArgs(process)
-  .then(async ({ target }) => {
+  .then(async ({ raw, target }) => {
+    const { files: fileStats, languages } = await scanFiles(target, { extraFileExtensions });
+
+    if (raw) {
+      each(fileStats, ({ file, language, lines }) => {
+        console.log(file, language, lines);
+      });
+      return;
+    }
+
     console.log(`Target: ${target}`);
 
     const hash = await checksum(target);
@@ -25,7 +38,6 @@ parseArgs(process)
     const diskUsage = await du(target);
     console.log(`Disk Usage: ${diskUsage}`);
 
-    const { languages } = await scanFiles(target, { extraFileExtensions });
     const arr = [];
     each(languages, ({ files, lines }, language) => {
       arr.push([language, files, lines]);
