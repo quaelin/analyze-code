@@ -21,6 +21,10 @@
     "analyze-code": "./bin"
   },
   "dependencies": {
+    "count-lines-in-file": "^1.1.0",
+    "glob": "^7.1.6",
+    "isbinaryfile": "^4.0.6",
+    "language-detect": "^1.1.0",
     "lodash": "^4.17.20",
     "minimist": "^1.2.5"
   },
