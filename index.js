@@ -1,5 +1,5 @@
 const { each } = require('lodash');
-const { checksum, du, parseArgs, scanFiles } = require('./lib');
+const { du, parseArgs, scanFiles } = require('./lib');
 
 const extraFileExtensions = {
   '.conf': 'Shell',
@@ -10,8 +10,13 @@ const extraFileExtensions = {
   '.jmx': 'JMeter Maven Plugin',
   '.js.snap': 'Jest',
   '.jsx.snap': 'Jest',
+  '.make': 'Makefile',
   '.mdown': 'Markdown',
   '.pl': 'Perl', // language-detect considers .pl to be Prolog, but it rarely is
+  '.react.js': 'React',
+  '.react.jsx': 'React',
+  '.react.ts': 'React',
+  '.react.tsx': 'React',
   '.ts': 'Typescript',
   '.ts.snap': 'Jest',
   '.tsx': 'Typescript',
@@ -19,34 +24,55 @@ const extraFileExtensions = {
   '.tsv': 'Tab Separated Values',
 };
 
+const ignores = [
+  '**/.git',
+  '**/node_modules',
+];
+
+const out = (...args) => {
+  console.log(...args);
+};
+
 parseArgs(process)
-  .then(async ({ raw, target }) => {
-    const { files: fileStats, languages } = await scanFiles(target, { extraFileExtensions });
+  .then(async ({ absolute, debug, format, raw, summary, target }) => {
+    const scanner = scanFiles(
+      target,
+      { absolute, debug, extraFileExtensions, ignores, summary }
+    );
+
+    scanner.onError((err) => { console.error(err); });
 
     if (raw) {
-      each(fileStats, ({ file, language, lines }) => {
-        console.log(file, language, lines);
+      scanner.onScan(({ file, language, lines, bytes }) => {
+        if (format === 'csv') {
+          out(`"${file}","${language}",${lines},${bytes}`);
+        }
+        if (format === 'json') {
+          out(JSON.stringify({ file, language, lines, bytes }));
+        }
       });
-      return;
     }
 
-    console.log(`Target: ${target}`);
+    if (summary) {
+      scanner.onceSummary(async (languages) => {
+        out(`Target: ${target}`);
 
-    const hash = await checksum(target);
-    console.log(`Checksum: ${hash}`);
+        const diskUsage = await du(target);
+        out(`Disk Usage: ${diskUsage}`);
 
-    const diskUsage = await du(target);
-    console.log(`Disk Usage: ${diskUsage}`);
+        const arr = [];
+        each(languages, ({ files, lines }, language) => {
+          arr.push([language, files, lines]);
+        });
+        arr.sort((a, b) => b[2] - a[2]); // Sort by line count
+        out('Languages:');
+        each(arr, ([language, files, lines]) => {
+          out(`  ${language}: ${files} files, ${lines} lines`);
+        });
+      });
+    }
 
-    const arr = [];
-    each(languages, ({ files, lines }, language) => {
-      arr.push([language, files, lines]);
-    });
-    arr.sort((a, b) => b[2] - a[2]); // Sort by line count
-    console.log('Languages:');
-    each(arr, ([language, files, lines]) => {
-      console.log(`  ${language}: ${files} files, ${lines} lines`);
-    });
+    return scanner.onceComplete();
   })
   .catch((err) => {
     console.error(`Error: ${err.message || err}`);
