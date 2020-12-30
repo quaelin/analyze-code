@@ -37,7 +37,7 @@ parseArgs(process)
   .then(async ({ absolute, debug, format, raw, summary, target }) => {
     const scanner = scanFiles(
       target,
-      { absolute, debug, extraFileExtensions, ignores, summary }
+      { absolute, debug, extraFileExtensions, ignores }
     );
 
     scanner.onError((err) => { console.error(err); });
@@ -53,26 +53,25 @@ parseArgs(process)
       });
     }
 
+    await scanner.onceComplete();
+
     if (summary) {
-      scanner.onceSummary(async (languages) => {
-        out(`Target: ${target}`);
+      const languages = scanner.getSummary();
+      out(`Target: ${target}`);
 
-        const diskUsage = await du(target);
-        out(`Disk Usage: ${diskUsage}`);
+      const diskUsage = await du(target);
+      out(`Disk Usage: ${diskUsage}`);
 
-        const arr = [];
-        each(languages, ({ files, lines }, language) => {
-          arr.push([language, files, lines]);
-        });
-        arr.sort((a, b) => b[2] - a[2]); // Sort by line count
-        out('Languages:');
-        each(arr, ([language, files, lines]) => {
-          out(`  ${language}: ${files} files, ${lines} lines`);
-        });
+      const arr = [];
+      each(languages, ({ files, lines, bytes }, language) => {
+        arr.push([language, files, lines, bytes]);
+      });
+      arr.sort((a, b) => b[2] - a[2]); // Sort by line count
+      out('Languages:');
+      each(arr, ([language, files, lines, bytes]) => {
+        out(`  ${language}: ${files} files, ${lines} lines, ${bytes} bytes`);
       });
     }
-
-    return scanner.onceComplete();
   })
   .catch((err) => {
     console.error(`Error: ${err.message || err}`);
