@@ -21,14 +21,13 @@
     "analyze-code": "./bin"
   },
   "dependencies": {
-    "core-js": "^3.8.1",
     "count-lines-in-file": "^1.1.0",
     "fast-glob": "^3.2.4",
     "isbinaryfile": "^4.0.6",
     "language-detect": "^1.1.0",
     "lodash": "^4.17.20",
     "minimist": "^1.2.5",
-    "particl": "^0.8.1"
+    "particl": "^0.8.3"
   },
   "devDependencies": {
     "eslint": "^7.15.0",

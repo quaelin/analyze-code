@@ -27,6 +27,7 @@ const extraFileExtensions = {
 const ignores = [
   '**/.git',
   '**/node_modules',
+  '**/package-lock.json',
 ];
 
 const out = (...args) => {
