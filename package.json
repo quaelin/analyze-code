@@ -25,7 +25,7 @@
     "fast-glob": "^3.2.4",
     "isbinaryfile": "^4.0.6",
     "language-detect": "^1.1.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "minimist": "^1.2.5",
     "particl": "^0.8.3"
   },
