@@ -26,7 +26,7 @@
     "isbinaryfile": "^4.0.6",
     "language-detect": "^1.1.0",
     "lodash": "^4.17.21",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "particl": "^0.8.3"
   },
   "devDependencies": {
